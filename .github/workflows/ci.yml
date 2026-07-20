@@ -6,8 +6,10 @@
 name: CI
 
 on:
+  # No base-branch filter: the 26Q3-REPO extraction lands as stacked PRs
+  # (base = parent card's branch), and a `branches: [main]` filter would
+  # skip CI on every stacked PR — each card must gate on its own CI.
   pull_request:
-    branches: ["main"]
     paths-ignore:
       - "**.md"
       - ".gitignore"
