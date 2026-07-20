@@ -10,7 +10,9 @@ from pathlib import Path
 
 import pytest
 
-GATE_INPUTS = ["scripts", "flaime_serving", "VENDORED_FROM.json", "LOC_BUDGET"]
+# tests/ is a gate input too: vendored test copies (REPO-14+) get manifest
+# entries, and the tamper gate hashes every manifest path.
+GATE_INPUTS = ["scripts", "flaime_serving", "tests", "VENDORED_FROM.json", "LOC_BUDGET"]
 
 
 @pytest.fixture
