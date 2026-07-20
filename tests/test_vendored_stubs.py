@@ -6,6 +6,8 @@ These mirror the upstream behavior of PackingConfig
 would surface here as well as in the tamper gate.
 """
 
+from typing import Any
+
 import pytest
 
 from flaime_serving.vendored.distributed import get_rank_and_world_size, is_main_process
@@ -39,8 +41,9 @@ class TestPackingConfig:
         ],
     )
     def test_validation_rejects_bad_values(self, field: str, value: float) -> None:
+        kwargs: dict[str, Any] = {field: value}
         with pytest.raises(ValueError):
-            PackingConfig(**{field: value})
+            PackingConfig(**kwargs)
 
 
 class TestIsMainProcess:
