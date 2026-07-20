@@ -22,7 +22,9 @@ class TestPackingConfig:
         assert config.enabled is True
 
     def test_derived_properties(self) -> None:
-        config = PackingConfig(max_duration_seconds=2.0, sample_rate=16000, gap_seconds=0.5)
+        config = PackingConfig(
+            max_duration_seconds=2.0, sample_rate=16000, gap_seconds=0.5
+        )
         assert config.max_samples == 32000
         assert config.gap_samples == 8000
 
@@ -46,7 +48,9 @@ class TestIsMainProcess:
         assert is_main_process(0) is True
         assert is_main_process(1) is False
 
-    def test_auto_detect_defaults_to_main(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_auto_detect_defaults_to_main(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         for var in ("LOCAL_RANK", "WORLD_SIZE", "SLURM_LOCALID", "SLURM_NTASKS"):
             monkeypatch.delenv(var, raising=False)
         assert get_rank_and_world_size() == (0, 1)
