@@ -17,6 +17,22 @@
       "sha256": "a0d628f2745844f40bbed5d0c4dd3a806c457dfa842c8202a489140d3eb160c6",
       "status": "ADAPTED",
       "deltas": "extracted get_rank_and_world_size + is_main_process only; provenance docstring header; training-only torch/dist imports and DDP setup dropped"
+    },
+    {
+      "path": "flaime_serving/vendored/base_model.py",
+      "upstream_path": "flaime/infrastructure/models/base_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "3e88b0a3601541b3702734fa603429db274c2a761655fbeec19e2865eab1f919",
+      "status": "VERBATIM",
+      "deltas": "import rewrite only: flaime.infrastructure.datasets.dynamic_batching -> flaime_serving.vendored.packing_config"
+    },
+    {
+      "path": "tests/vendored/test_base_model.py",
+      "upstream_path": "tests/infrastructure/models/test_base_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "e0cf5e2f76e19183d506e6010d1757b4816be8661271a47852903aa3c5a127ca",
+      "status": "VERBATIM",
+      "deltas": "import rewrite only: flaime.infrastructure.models.base_model -> flaime_serving.vendored.base_model"
     }
   ]
 }
