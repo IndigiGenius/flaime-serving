@@ -65,6 +65,14 @@
       "sha256": "bb40f108ab0231f9ec542f87f002af94ed19ae0549d23df5fa141e1e05dc512c",
       "status": "VERBATIM",
       "deltas": "import rewrites (base_model, wav2vec2_model -> flaime_serving.vendored.*) + patch-target module-path constant _MODULE rewritten to flaime_serving.vendored.wav2vec2_model (same mechanical-rewrite class, FLAIME#608)"
+    },
+    {
+      "path": "flaime_serving/vendored/xeus_model.py",
+      "upstream_path": "flaime/infrastructure/models/xeus_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "4ebdcf92d7368958c0d369c4edec693060987a72d62a46c805e9dac2fba41ef8",
+      "status": "VERBATIM",
+      "deltas": "import rewrites only (5 lines): PackingConfig -> flaime_serving.vendored.packing_config; two lazy checkpoint-load ctc_vocab imports -> flaime_serving.vendored.ctc_vocab (lands in REPO-19; unreachable until then, expected per card); two lazy training-path collate imports -> flaime_serving.vendored.collate (target intentionally not vendored, FLAIME#608 decision 2026-07-20)"
     }
   ]
 }
