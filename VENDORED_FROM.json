@@ -33,6 +33,22 @@
       "sha256": "e0cf5e2f76e19183d506e6010d1757b4816be8661271a47852903aa3c5a127ca",
       "status": "VERBATIM",
       "deltas": "import rewrite only: flaime.infrastructure.models.base_model -> flaime_serving.vendored.base_model"
+    },
+    {
+      "path": "flaime_serving/vendored/xeus_standalone.py",
+      "upstream_path": "flaime/infrastructure/models/xeus_standalone.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "1a7cfb2db53d3b82c3d49e79d5ddc2887880f06395980809cdc328580c5bf205",
+      "status": "VERBATIM",
+      "deltas": "none — byte-identical copy (torch-only module, zero flaime imports)"
+    },
+    {
+      "path": "tests/vendored/test_xeus_standalone.py",
+      "upstream_path": "tests/infrastructure/models/test_xeus_standalone.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "573d7863492c520b96dff36281bc553c3536c28372ff79dd4602a4319c9acd62",
+      "status": "VERBATIM",
+      "deltas": "import rewrites only: flaime.infrastructure.models.xeus_standalone -> flaime_serving.vendored.xeus_standalone (top-level from-import + two inline as-imports)"
     }
   ]
 }
