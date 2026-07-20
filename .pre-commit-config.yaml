@@ -1,0 +1,49 @@
+# Mirrors FLAIME's pre-commit hooks (26Q3-REPO-01), plus the epic's two
+# scope gates (LoC budget, vendor tamper) as local hooks.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-docstring-first
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-PyYAML]
+        args: [--ignore-missing-imports, --no-strict-optional, --explicit-package-bases]
+        exclude: ^tests/
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      - id: loc-budget
+        name: LoC budget gate (scope guardrail)
+        entry: bash scripts/check_loc_budget.sh
+        language: system
+        always_run: true
+        pass_filenames: false
+
+      - id: vendor-tamper
+        name: Vendor tamper gate (frozen vendored files)
+        entry: bash scripts/check_vendored.sh
+        language: system
+        always_run: true
+        pass_filenames: false
