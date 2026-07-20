@@ -49,6 +49,22 @@
       "sha256": "573d7863492c520b96dff36281bc553c3536c28372ff79dd4602a4319c9acd62",
       "status": "VERBATIM",
       "deltas": "import rewrites only: flaime.infrastructure.models.xeus_standalone -> flaime_serving.vendored.xeus_standalone (top-level from-import + two inline as-imports)"
+    },
+    {
+      "path": "flaime_serving/vendored/wav2vec2_model.py",
+      "upstream_path": "flaime/infrastructure/models/wav2vec2_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "a842aca7d7c8d33a7dc108cd9403d8aa1508700eba881bfeec38db5264bb2ebe",
+      "status": "VERBATIM",
+      "deltas": "import rewrites only: PackingConfig -> flaime_serving.vendored.packing_config; two lazy training-path imports flaime.scripts.btm.collate -> flaime_serving.vendored.collate (target intentionally not vendored — dead on inference path, ModuleNotFoundError if called; maintainer decision 2026-07-20 on FLAIME#608)"
+    },
+    {
+      "path": "tests/vendored/test_wav2vec2_model.py",
+      "upstream_path": "tests/infrastructure/models/test_wav2vec2_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "bb40f108ab0231f9ec542f87f002af94ed19ae0549d23df5fa141e1e05dc512c",
+      "status": "VERBATIM",
+      "deltas": "import rewrites (base_model, wav2vec2_model -> flaime_serving.vendored.*) + patch-target module-path constant _MODULE rewritten to flaime_serving.vendored.wav2vec2_model (same mechanical-rewrite class, FLAIME#608)"
     }
   ]
 }
