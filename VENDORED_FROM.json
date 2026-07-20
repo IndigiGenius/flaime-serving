@@ -8,7 +8,7 @@
       "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
       "sha256": "a5f510d6b5fc7482fbfed6c0ad244a5d1efd32f8b3273d6088ff0dc4fd6c2d9a",
       "status": "ADAPTED",
-      "deltas": "extracted the PackingConfig dataclass only (upstream module also carries packing logic); provenance docstring header; unused `field` import dropped"
+      "deltas": "extracted the PackingConfig dataclass only (upstream module also carries packing logic); provenance docstring header; dropped imports unused by the extraction (`field`, `TYPE_CHECKING`, `Any`) and the TYPE_CHECKING block"
     },
     {
       "path": "flaime_serving/vendored/distributed.py",

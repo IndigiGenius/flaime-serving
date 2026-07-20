@@ -54,6 +54,12 @@ class TestVendorTamperGate:
         assert result.returncode != 0
         assert "UNLISTED" in result.stdout
 
+    def test_missing_listed_file_fails(self, sandbox: Path) -> None:
+        (sandbox / "flaime_serving" / "vendored" / "packing_config.py").unlink()
+        result = run_gate(sandbox, "check_vendored.sh")
+        assert result.returncode != 0
+        assert "MISSING" in result.stdout
+
 
 class TestLocBudgetGate:
     def test_within_budget_passes(self, sandbox: Path) -> None:

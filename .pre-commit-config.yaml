@@ -23,9 +23,10 @@ repos:
     rev: v1.17.1
     hooks:
       - id: mypy
-        additional_dependencies: [types-PyYAML]
+        # tests/ included (unlike FLAIME's hook): CI type-checks tests/, and
+        # the local gate must catch what CI enforces.
+        additional_dependencies: [types-PyYAML, pytest]
         args: [--ignore-missing-imports, --no-strict-optional, --explicit-package-bases]
-        exclude: ^tests/
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
