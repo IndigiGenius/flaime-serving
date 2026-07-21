@@ -4,7 +4,6 @@ Run:
     uv run pytest tests/test_router.py -v
 
 Implementation order (shortest path to GREEN):
-Implementation order (shortest path to GREEN):
   1. LanguageRouter._load_and_validate()  ← pure YAML + dict logic; no models
   2. LanguageRouter.supported_languages() ← trivial dict comprehension
   3. LanguageRouter.resolve()             ← routing logic; no models
