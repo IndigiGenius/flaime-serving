@@ -100,8 +100,7 @@ def test_beam_beats_greedy_on_ambiguous_input() -> None:
     # single-step prob but the alignment <blank,A> accumulates higher joint prob
     # once we sum over both emit-A paths.
     #
-    # We just assert beam search returns a DIFFERENT sequence than greedy here,
-    # AND that its total log-prob under the model is >= greedy's.
+    # We just assert beam search returns a DIFFERENT sequence than greedy here.
     log_probs = torch.tensor(
         [
             [
