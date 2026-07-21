@@ -125,6 +125,25 @@ def test_beam_beats_greedy_on_ambiguous_input() -> None:
         f"Expected beam≠greedy on ambiguous input; got beam={beam_out}, greedy={greedy_collapsed}"
     )
 
+    # Score: for this tiny case, brute-force all CTC paths and sum probs per collapsed sequence.
+    vocab = log_probs.shape[1]
+    seq_logp: dict[tuple[int, ...], float] = {}
+    for c0 in range(vocab):
+        for c1 in range(vocab):
+            lp = float(log_probs[0, c0] + log_probs[1, c1])
+            prev: int | None = None
+            collapsed: list[int] = []
+            for tok in (c0, c1):
+                if tok == 0:
+                    prev = None
+                    continue
+                if tok != prev:
+                    collapsed.append(tok)
+                    prev = tok
+            key = tuple(collapsed)
+            seq_logp[key] = _logsumexp2(seq_logp.get(key, NEG_INF), lp)
+
+    assert seq_logp.get(tuple(beam_out), NEG_INF) >= seq_logp.get(tuple(greedy_collapsed), NEG_INF) - 1e-12
 
 @pytest.mark.parametrize("bad_width", [0, -1, -5])
 def test_invalid_beam_width_raises(bad_width: int) -> None:
