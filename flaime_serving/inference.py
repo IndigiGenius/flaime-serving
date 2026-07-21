@@ -149,7 +149,7 @@ def _normalize_audio(
 
 def _validate_decoder(decoder: str) -> None:
     """Raise ValueError if decoder is not a recognised strategy string."""
-    if decoder != "ctc_greedy" and not re.fullmatch(r"ctc_beam\d+", decoder):
+    if decoder != "ctc_greedy" and not re.fullmatch(r"ctc_beam[1-9]\d*", decoder):
         raise ValueError(
             f"Unrecognised decoder: {decoder!r}. "
             "Expected 'ctc_greedy' or 'ctc_beam<N>'."
