@@ -10,7 +10,9 @@ while IFS=$'\t' read -r path expected; do
   actual=$(sha256sum "$path" | cut -d' ' -f1)
   [ "$actual" = "$expected" ] || { echo "TAMPERED: $path (sha256 $actual != manifest $expected)"; fail=1; }
 done < <(python3 -c 'import json; [print(f["path"], f["sha256"], sep="\t") for f in json.load(open("VENDORED_FROM.json"))["files"]]')
+scan_dirs="flaime_serving/vendored"
+[ -d tests/vendored ] && scan_dirs="$scan_dirs tests/vendored"
 while IFS= read -r f; do
   grep -Fq "\"$f\"" VENDORED_FROM.json || { echo "UNLISTED vendored file: $f"; fail=1; }
-done < <(find flaime_serving/vendored -name '*.py' ! -name '__init__.py')
+done < <(find $scan_dirs -name '*.py' ! -name '__init__.py')
 exit "$fail"

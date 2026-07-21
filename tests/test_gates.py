@@ -60,6 +60,15 @@ class TestVendorTamperGate:
         assert result.returncode != 0
         assert "MISSING" in result.stdout
 
+    def test_unlisted_vendored_test_copy_fails(self, sandbox: Path) -> None:
+        """Vendored test copies under tests/vendored/ are manifest-gated too."""
+        vendored_tests = sandbox / "tests" / "vendored"
+        vendored_tests.mkdir(exist_ok=True)
+        (vendored_tests / "test_rogue.py").write_text("x = 1\n")
+        result = run_gate(sandbox, "check_vendored.sh")
+        assert result.returncode != 0
+        assert "UNLISTED" in result.stdout
+
 
 class TestLocBudgetGate:
     def test_within_budget_passes(self, sandbox: Path) -> None:
