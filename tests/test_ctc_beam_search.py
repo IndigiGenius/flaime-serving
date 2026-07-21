@@ -143,7 +143,11 @@ def test_beam_beats_greedy_on_ambiguous_input() -> None:
             key = tuple(collapsed)
             seq_logp[key] = _logsumexp2(seq_logp.get(key, NEG_INF), lp)
 
-    assert seq_logp.get(tuple(beam_out), NEG_INF) >= seq_logp.get(tuple(greedy_collapsed), NEG_INF) - 1e-12
+    assert (
+        seq_logp.get(tuple(beam_out), NEG_INF)
+        >= seq_logp.get(tuple(greedy_collapsed), NEG_INF) - 1e-12
+    )
+
 
 @pytest.mark.parametrize("bad_width", [0, -1, -5])
 def test_invalid_beam_width_raises(bad_width: int) -> None:
