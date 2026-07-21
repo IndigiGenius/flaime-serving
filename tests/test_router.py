@@ -59,7 +59,7 @@ def _write_yaml(
 ) -> Path:
     """Write a YAML dict to a temp file and return the path."""
     path = tmp_path / filename
-    path.write_text(yaml.dump(data))
+    path.write_text(yaml.safe_dump(data, sort_keys=False))
     return path
 
 
