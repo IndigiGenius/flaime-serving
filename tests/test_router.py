@@ -114,10 +114,7 @@ class TestLanguageRouterLoad:
         """A syntactically invalid YAML file raises a ValueError with the file path."""
         bad_yaml = tmp_path / "bad.yaml"
         bad_yaml.write_text("merged_checkpoint: {\n  path: [unclosed")
-        # TODO(DEMO-03): Decide whether to wrap yaml.YAMLError in ValueError or let it
-        #   propagate.  Either is acceptable; update this assertion to match the
-        #   chosen approach.  The message must include the file path.
-        with pytest.raises((ValueError, Exception), match=str(bad_yaml)):
+        with pytest.raises(ValueError, match=str(bad_yaml)):
             LanguageRouter(bad_yaml)
 
 
