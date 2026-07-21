@@ -12,4 +12,8 @@ def test_public_api_is_frozen_subset() -> None:
     """Only landed frozen-API names are exported (final freeze audited in REPO-04)."""
     import flaime_serving
 
-    assert list(getattr(flaime_serving, "__all__", [])) == ["ASRModelFactory"]
+    assert list(getattr(flaime_serving, "__all__", [])) == [
+        "ASRInferenceEngine",
+        "ASRModelFactory",
+        "TranscriptionResult",
+    ]
