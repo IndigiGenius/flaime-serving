@@ -144,7 +144,7 @@ def _normalize_audio(
             waveform, orig_freq=sr, new_freq=TARGET_SR
         )
 
-    return waveform.numpy().astype(np.float32)
+    return waveform.detach().cpu().numpy().astype(np.float32)
 
 
 def _validate_decoder(decoder: str) -> None:
