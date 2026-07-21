@@ -8,7 +8,7 @@ def test_import_flaime_serving() -> None:
     assert module is not None
 
 
-def test_public_api_is_frozen_subset() -> None:
+def test_public_api_is_frozen_exact_eight_names() -> None:
     """Frozen API is exactly the eight names landed by 26Q3-REPO-04."""
     import flaime_serving
 
