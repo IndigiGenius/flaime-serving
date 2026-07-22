@@ -1,0 +1,78 @@
+[project]
+name = "flaime-serving"
+version = "0.1.0"
+description = "Standalone audio-in to text-out ASR inference layer for FLAIME community demos"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "FLAIR" }]
+dependencies = [
+    # Version pins match FLAIME's (26Q3-REPO-01 AC). Public PyPI only —
+    # no git dependencies of any kind (epic guardrail).
+    "numpy>=1.24",
+    "torch>=2.8.0,<2.9",
+    "torchaudio>=2.8.0,<2.9",
+    "transformers>=4.35.0",
+    "PyYAML>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "mypy>=1.17",
+    "ruff>=0.12",
+    "pre-commit>=3.7",
+    "types-PyYAML",
+]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["flaime_serving*"]
+exclude = ["tests*"]
+
+# Ruff / mypy settings mirror FLAIME's (26Q3-REPO-01 AC).
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long (handled by formatter)
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/*" = ["E501", "C901"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+no_strict_optional = true
+explicit_package_bases = true

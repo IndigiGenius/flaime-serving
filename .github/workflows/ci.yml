@@ -1,0 +1,76 @@
+# CI for flaime-serving (26Q3-REPO-01). Mirrors FLAIME's lean PR-only
+# workflow (budget triage 26Q2-INFRA-21): lint without deps, single test job
+# with uv caching, hard timeout. Adds the epic's two scope gates: LoC budget
+# and vendor tamper check.
+
+name: CI
+
+on:
+  # No base-branch filter: the 26Q3-REPO extraction lands as stacked PRs
+  # (base = parent card's branch), and a `branches: [main]` filter would
+  # skip CI on every stacked PR — each card must gate on its own CI.
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+      - name: Check formatting
+        run: uvx 'ruff>=0.12' format --check .
+      - name: Lint
+        run: uvx 'ruff>=0.12' check .
+
+  gates:
+    # LoC budget + vendor tamper gates need no dependencies — run before the
+    # expensive test job so scope violations fail fast.
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v7
+      - name: LoC budget gate
+        run: bash scripts/check_loc_budget.sh
+      - name: Vendor tamper gate
+        run: bash scripts/check_vendored.sh
+
+  test:
+    needs: [lint, gates]
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    timeout-minutes: 20
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h
+      - uses: actions/checkout@v7
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsndfile1 ffmpeg
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+      - name: Sync environment
+        run: uv sync
+      - name: Type check
+        run: uv run mypy flaime_serving/ tests/
+      - name: Tests
+        run: uv run pytest

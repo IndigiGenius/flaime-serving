@@ -1,0 +1,22 @@
+{
+  "_comment": "Provenance manifest for frozen vendored FLAIME code (26Q3-REPO vendoring rule 2). Every file under flaime_serving/vendored/ except __init__.py must have an entry; scripts/check_vendored.sh enforces sha256 match in CI and pre-commit. Editing a vendored file requires updating this manifest in the same diff.",
+  "vendor_source": "IndigiGenius/FLAIME",
+  "files": [
+    {
+      "path": "flaime_serving/vendored/packing_config.py",
+      "upstream_path": "flaime/infrastructure/datasets/dynamic_batching.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "a5f510d6b5fc7482fbfed6c0ad244a5d1efd32f8b3273d6088ff0dc4fd6c2d9a",
+      "status": "ADAPTED",
+      "deltas": "extracted the PackingConfig dataclass only (upstream module also carries packing logic); provenance docstring header; dropped imports unused by the extraction (`field`, `TYPE_CHECKING`, `Any`) and the TYPE_CHECKING block"
+    },
+    {
+      "path": "flaime_serving/vendored/distributed.py",
+      "upstream_path": "flaime/utils/distributed.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "a0d628f2745844f40bbed5d0c4dd3a806c457dfa842c8202a489140d3eb160c6",
+      "status": "ADAPTED",
+      "deltas": "extracted get_rank_and_world_size + is_main_process only; provenance docstring header; training-only torch/dist imports and DDP setup dropped"
+    }
+  ]
+}
