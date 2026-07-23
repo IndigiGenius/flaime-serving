@@ -84,10 +84,16 @@ class TestLocBudgetGate:
 
     def test_vendored_files_are_exempt(self, sandbox: Path) -> None:
         """Vendored code must not count toward the budget (tamper gate owns it)."""
-        vendored_loc = sum(
-            len(p.read_text().splitlines())
-            for p in (sandbox / "flaime_serving" / "vendored").glob("*.py")
+        before = run_gate(sandbox, "check_loc_budget.sh")
+        assert before.returncode == 0, before.stdout + before.stderr
+        assert "LoC budget OK" in before.stdout
+        counted_before = int(before.stdout.rsplit(":", 1)[1].split("/")[0])
+        # A large vendored file would blow the budget if it were counted.
+        (sandbox / "flaime_serving" / "vendored" / "huge.py").write_text(
+            "\n".join(f"x{i} = {i}" for i in range(10_000)) + "\n"
         )
-        result = run_gate(sandbox, "check_loc_budget.sh")
-        counted = int(result.stdout.rsplit(":", 1)[1].split("/")[0])
-        assert counted < vendored_loc, "vendored LoC appears to be counted"
+
+        after = run_gate(sandbox, "check_loc_budget.sh")
+        assert after.returncode == 0, after.stdout + after.stderr
+        counted_after = int(after.stdout.rsplit(":", 1)[1].split("/")[0])
+        assert counted_after == counted_before, "vendored LoC appears to be counted"
