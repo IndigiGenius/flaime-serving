@@ -73,6 +73,14 @@
       "sha256": "4ebdcf92d7368958c0d369c4edec693060987a72d62a46c805e9dac2fba41ef8",
       "status": "VERBATIM",
       "deltas": "import rewrites only (5 lines): PackingConfig -> flaime_serving.vendored.packing_config; two lazy checkpoint-load ctc_vocab imports -> flaime_serving.vendored.ctc_vocab (lands in REPO-19; unreachable until then, expected per card); two lazy training-path collate imports -> flaime_serving.vendored.collate (target intentionally not vendored, FLAIME#608 decision 2026-07-20)"
+    },
+    {
+      "path": "flaime_serving/vendored/ctc_vocab.py",
+      "upstream_path": "flaime/infrastructure/models/ctc_vocab.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "b86c38179f892e2aa22426bd52ed047d5289101be183569c92eeb6a39dee4fe1",
+      "status": "VERBATIM",
+      "deltas": "import rewrites only (2 lines): is_main_process -> flaime_serving.vendored.distributed; one lazy vocab-build phonet_integration import -> flaime_serving.vendored.phonet_integration (target intentionally not vendored — training-only path, FLAIME#608 decision 2026-07-20). Lazy phonet.* import at :214 untouched: already guarded by try/ImportError upstream"
     }
   ]
 }
