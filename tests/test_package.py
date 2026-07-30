@@ -8,8 +8,12 @@ def test_import_flaime_serving() -> None:
     assert module is not None
 
 
-def test_no_public_api_yet() -> None:
-    """The frozen 8-name API lands in REPO-03/04/21; the scaffold exports nothing."""
+def test_public_api_is_frozen_subset() -> None:
+    """Only landed frozen-API names are exported (final freeze audited in REPO-04)."""
     import flaime_serving
 
-    assert list(getattr(flaime_serving, "__all__", [])) == []
+    assert list(getattr(flaime_serving, "__all__", [])) == [
+        "ASRInferenceEngine",
+        "ASRModelFactory",
+        "TranscriptionResult",
+    ]

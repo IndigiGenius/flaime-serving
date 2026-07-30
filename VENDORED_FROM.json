@@ -81,6 +81,22 @@
       "sha256": "b86c38179f892e2aa22426bd52ed047d5289101be183569c92eeb6a39dee4fe1",
       "status": "VERBATIM",
       "deltas": "import rewrites only (2 lines): is_main_process -> flaime_serving.vendored.distributed; one lazy vocab-build phonet_integration import -> flaime_serving.vendored.phonet_integration (target intentionally not vendored — training-only path, FLAIME#608 decision 2026-07-20). Lazy phonet.* import at :214 untouched: already guarded by try/ImportError upstream"
+    },
+    {
+      "path": "flaime_serving/vendored/model_factory.py",
+      "upstream_path": "flaime/infrastructure/models/model_factory.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "57cca3d1b353d71fea7657fff2f057294c0f9aa4601f6728b7205b4a5001a610",
+      "status": "ADAPTED",
+      "deltas": "deleted the 5 unvendored family imports (canary, conformer, mms, owsm, whisper) and their 5 register() calls; families kept: wav2vec2, xeus. Zero other edits — relative imports survive unchanged, no import rewrites needed. (Card said six families; multi_decoder was never a factory family — card inaccuracy noted on the PR)"
+    },
+    {
+      "path": "tests/vendored/test_model_factory.py",
+      "upstream_path": "tests/infrastructure/models/test_model_factory.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "status": "ADAPTED",
+      "sha256": "9aa73b3361c23efc3b6afa17df18dee802920aee7b9ecc02cde738bb3e03c41e",
+      "deltas": "import rewrites (base_model, model_factory -> flaime_serving.vendored.*) + patch-target module-path strings; deleted 7 test methods that assert unvendored built-in families or duplicate vendored-family twins (enumerated in the REPO-21 PR); remaining tests unedited"
     }
   ]
 }
