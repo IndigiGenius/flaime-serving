@@ -8,12 +8,17 @@ def test_import_flaime_serving() -> None:
     assert module is not None
 
 
-def test_public_api_is_frozen_subset() -> None:
-    """Only landed frozen-API names are exported (final freeze audited in REPO-04)."""
+def test_public_api_is_frozen_exact_eight_names() -> None:
+    """Frozen API is exactly the eight names landed by 26Q3-REPO-04."""
     import flaime_serving
 
     assert list(getattr(flaime_serving, "__all__", [])) == [
         "ASRInferenceEngine",
         "ASRModelFactory",
+        "EnginePool",
+        "LanguageNotSupportedError",
+        "LanguageRouter",
+        "RouteResult",
         "TranscriptionResult",
+        "beam_search_ctc_decode",
     ]
