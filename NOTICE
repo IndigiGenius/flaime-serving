@@ -1,0 +1,31 @@
+FLAIME Serving
+Copyright 2026 IndigiGenius
+
+This product includes software developed as part of FLAIME (First Languages AI
+Machine learning Environment), licensed under the Apache License, Version 2.0.
+
+--------------------------------------------------------------------------------
+XEUS encoder reimplementation
+--------------------------------------------------------------------------------
+
+flaime_serving/vendored/xeus_standalone.py and flaime_serving/vendored/
+xeus_model.py contain a standalone reimplementation of the XEUS encoder
+architecture, written against ESPnet's XEUS SSL model in order to remove the
+ESPnet runtime dependency.
+
+  XEUS       arXiv:2407.00837 — https://huggingface.co/espnet/xeus
+  ESPnet     https://github.com/espnet/espnet — Apache License, Version 2.0
+
+The XEUS *model weights* are distributed separately by their authors under
+CC-BY-NC-SA-4.0 and are NOT included in this repository. This repository ships
+code only; no model weights are committed. See "Model licensing" in README.md
+for the terms that attach to checkpoints this code loads.
+
+--------------------------------------------------------------------------------
+Model weights are not covered by this license
+--------------------------------------------------------------------------------
+
+The Apache-2.0 license in LICENSE covers the source code in this repository.
+It does NOT cover any model checkpoint you load with it. Checkpoints carry the
+license of the foundation model they derive from, and two of the three families
+this code supports are non-commercial. See README.md.

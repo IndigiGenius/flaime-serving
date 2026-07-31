@@ -3,6 +3,8 @@ name = "flaime-serving"
 version = "0.1.0"
 description = "Standalone audio-in to text-out ASR inference layer for FLAIME community demos"
 readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.12"
 authors = [{ name = "FLAIR" }]
 dependencies = [
