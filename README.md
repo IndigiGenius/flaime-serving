@@ -21,6 +21,26 @@ Checkpoints stay external: `CHECKPOINTS_DIR` + `DEMO_CHECKPOINT_FILE` (or
 `DEMO_LANGUAGES_CONFIG` routing YAML) env vars, checkpoint dir mounted read-only,
 weights never committed.
 
+## CLI
+
+```
+uv run flaime-serve transcribe audio.wav --checkpoint /path/to/ckpt --model-type xeus
+uv run flaime-serve ui --checkpoint /path/to/ckpt --model-type xeus
+```
+
+`ui` shells out to `apps/demo/app.py`, which ships from `flaime-demo` (26Q3-REPO-08+),
+not this repo — it errors with a clear message if that path isn't present.
+
+## Router smoke test
+
+End-to-end routing + real transcription against `facebook/wav2vec2-base-960h`
+(~380 MB download, network required):
+
+```
+uv run python scripts/smoke_router.py
+uv run python scripts/smoke_router.py --device cuda   # if GPU available
+```
+
 ## Frozen public API (guardrail)
 
 `flaime_serving/__init__.py` exports exactly eight names — they land incrementally
