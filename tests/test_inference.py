@@ -538,7 +538,11 @@ class TestASRInferenceEngineLoad:
         assert engine.device == "cpu"
 
     def test_load_hf_hub_id_skips_existence_check(self, mocker) -> None:
-        """A 'org/model' Hub ID must bypass the local-path existence check."""
+        """A 'org/model' Hub ID must bypass the local-path existence check.
+
+        Requires the explicit remote opt-in: the ID resolves over the network,
+        so refusing by default is what makes an offline deployment offline.
+        """
         from flaime_serving.inference import ASRInferenceEngine
 
         mocker.patch(
@@ -548,11 +552,61 @@ class TestASRInferenceEngineLoad:
 
         # Must not raise FileNotFoundError even though the path doesn't exist locally.
         engine = ASRInferenceEngine.load(
-            "facebook/wav2vec2-base-960h", model_type="wav2vec2", device="cpu"
+            "facebook/wav2vec2-base-960h",
+            model_type="wav2vec2",
+            device="cpu",
+            allow_remote=True,
         )
         assert isinstance(engine, ASRInferenceEngine)
         # model_revision falls back to Path.name when no local config.json
         assert engine.model_revision == "wav2vec2-base-960h"
+
+    def test_load_refuses_a_hub_id_by_default(self) -> None:
+        """Remote resolution is opt-in: the default must not reach the network.
+
+        Without this, a routing-YAML entry of "facebook/wav2vec2-base" silently
+        downloads at load time on a deployment whose premise is offline
+        operation — and fails slowly (network timeout) rather than clearly.
+        """
+        from flaime_serving.inference import (
+            ASRInferenceEngine,
+            RemoteCheckpointRefused,
+        )
+
+        with pytest.raises(RemoteCheckpointRefused) as excinfo:
+            ASRInferenceEngine.load("facebook/wav2vec2-base", model_type="wav2vec2")
+
+        message = str(excinfo.value)
+        assert "facebook/wav2vec2-base" in message, "name the offending value"
+        assert "allow_remote" in message, "point at the opt-in"
+
+    def test_remote_refusal_stays_a_file_not_found_error(self) -> None:
+        """The refusal must remain a FileNotFoundError for downstream consumers.
+
+        flaime-demo's errors.py maps FileNotFoundError to "no model is loaded";
+        a bare ValueError would surface as "couldn't read that audio file",
+        a nonsense message for a checkpoint policy refusal.
+        """
+        from flaime_serving.inference import RemoteCheckpointRefused
+
+        assert issubclass(RemoteCheckpointRefused, FileNotFoundError)
+
+    def test_local_checkpoints_are_unaffected_by_the_gate(
+        self, tmp_path, mocker
+    ) -> None:
+        """The gate fires only for remote IDs, never for local checkpoints."""
+        from flaime_serving.inference import ASRInferenceEngine
+
+        ckpt = tmp_path / "model"
+        ckpt.mkdir()
+        (ckpt / "config.json").write_text("{}")
+        mocker.patch(
+            "flaime_serving.inference.ASRModelFactory",
+            autospec=True,
+        ).return_value.create_from_pretrained.return_value = _StubModel()
+
+        engine = ASRInferenceEngine.load(ckpt, model_type="xeus", device="cpu")
+        assert isinstance(engine, ASRInferenceEngine)
 
     def test_load_missing_relative_path_with_multiple_slashes_raises(self) -> None:
         """A relative path with >1 slash (e.g. 'some/nested/path') is NOT a Hub ID

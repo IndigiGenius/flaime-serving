@@ -156,6 +156,25 @@ def _validate_decoder(decoder: str) -> None:
         )
 
 
+class RemoteCheckpointRefused(FileNotFoundError):
+    """A checkpoint value would resolve over the network, and remote is off.
+
+    Subclasses :class:`FileNotFoundError` deliberately. Consumers already map
+    that class to "no model is loaded for this language", which is the right
+    thing to tell a user whose checkpoint cannot be resolved; a bare
+    ``ValueError`` would surface as an audio-decoding message instead.
+    """
+
+    def __init__(self, checkpoint_path: str) -> None:
+        super().__init__(
+            f"Refusing to resolve {checkpoint_path!r} from the HuggingFace Hub: "
+            "it looks like a Hub ID (relative, absent from disk, exactly one "
+            "'/'), and remote loading is disabled. Point at a local checkpoint, "
+            "or pass allow_remote=True to opt in."
+        )
+        self.checkpoint_path = checkpoint_path
+
+
 class ASRInferenceEngine:
     """Audio-in → text-out engine for the FLAIME community demo.
 
@@ -213,6 +232,7 @@ class ASRInferenceEngine:
         device: str | None = None,
         decoder: str = "ctc_greedy",
         warmup: bool = False,
+        allow_remote: bool = False,
     ) -> ASRInferenceEngine:
         """Load a checkpoint and return a ready-to-use engine.
 
@@ -230,10 +250,17 @@ class ASRInferenceEngine:
                 cold-start cost.  Uses in-RAM silence only — no disk/network
                 I/O.  Defaults to ``False`` to keep ``load()`` side-effect-free.
 
+            allow_remote: Permit ``checkpoint_path`` to resolve as a HuggingFace
+                Hub ID, which downloads at load time.  Defaults to ``False`` so
+                an offline deployment stays offline even if its routing config
+                names a Hub ID; pass ``True`` to opt in deliberately.
+
         Returns:
             Initialised ASRInferenceEngine with model already on device.
 
         Raises:
+            RemoteCheckpointRefused: If checkpoint_path looks like a Hub ID and
+                ``allow_remote`` is False.  Subclasses FileNotFoundError.
             FileNotFoundError: If checkpoint_path does not exist.
             ValueError: If model_type is not registered, or decoder is malformed.
         """
@@ -248,6 +275,12 @@ class ASRInferenceEngine:
             and not path.exists()
             and checkpoint_path.count("/") == 1
         )
+        # Remote resolution is opt-in. A deployment whose premise is offline
+        # operation must not reach the network because a routing YAML happened
+        # to contain a bare "org/name" — that fails slowly, at a network
+        # timeout, instead of clearly and immediately.
+        if is_hf_id and not allow_remote:
+            raise RemoteCheckpointRefused(checkpoint_path)
         if not is_hf_id and not path.exists():
             raise FileNotFoundError(f"Checkpoint not found: {path}")
         _validate_decoder(decoder)

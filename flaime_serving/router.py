@@ -279,12 +279,21 @@ class EnginePool:
     model reload on every request.
     """
 
-    def __init__(self, device: str | None = None, warmup: bool = False) -> None:
+    def __init__(
+        self,
+        device: str | None = None,
+        warmup: bool = False,
+        allow_remote: bool = False,
+    ) -> None:
         """Initialise an empty pool.
 
         Args:
             device: Torch device string (``"cpu"``, ``"cuda"``, …).  ``None``
                 delegates auto-detection to ASRInferenceEngine.load().
+            allow_remote: Forwarded to ASRInferenceEngine.load().  ``False``
+                (default) refuses checkpoint values that would resolve from the
+                HuggingFace Hub, so a routing config cannot quietly turn an
+                offline deployment into a downloading one.
             warmup: When ``True``, each engine runs one throwaway inference as
                 it is loaded (DEMO-07), so the one-time cold-start cost is paid
                 at load time rather than on the first user-facing transcription.
@@ -295,6 +304,7 @@ class EnginePool:
         """
         self._device = device
         self._warmup = warmup
+        self._allow_remote = allow_remote
         self._cache: dict[str, ASRInferenceEngine] = {}
 
     def get_or_load(self, route: RouteResult) -> ASRInferenceEngine:
@@ -322,6 +332,7 @@ class EnginePool:
                 device=self._device,
                 decoder=route.decoder,
                 warmup=self._warmup,
+                allow_remote=self._allow_remote,
             )
             self._cache[key] = cached
         elif cached.decoder != route.decoder:
