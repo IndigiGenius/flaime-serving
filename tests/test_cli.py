@@ -35,6 +35,28 @@ def stub_result():
 
 
 class TestCLIArgparse:
+    def test_transcribe_defaults_to_refusing_remote_checkpoints(self) -> None:
+        """Offline by default at the CLI too, not only in the demo."""
+        args = self._parse(
+            ["transcribe", "audio.wav", "--checkpoint", "/ckpt", "--model-type", "xeus"]
+        )
+        assert args.allow_remote is False
+
+    def test_transcribe_accepts_an_explicit_remote_opt_in(self) -> None:
+        """`--allow-remote` keeps Hub IDs usable, e.g. facebook/wav2vec2-base-960h."""
+        args = self._parse(
+            [
+                "transcribe",
+                "audio.wav",
+                "--checkpoint",
+                "facebook/wav2vec2-base-960h",
+                "--model-type",
+                "wav2vec2",
+                "--allow-remote",
+            ]
+        )
+        assert args.allow_remote is True
+
     def _parse(self, argv: list[str]) -> argparse.Namespace:
         from flaime_serving.cli import _build_parser
 

@@ -77,6 +77,17 @@ def _add_transcribe_parser(
         help="Decoding strategy: ctc_greedy or ctc_beam<N> (default: ctc_greedy).",
     )
     p.add_argument(
+        "--allow-remote",
+        action="store_true",
+        default=False,
+        dest="allow_remote",
+        help=(
+            "Permit --checkpoint to name a HuggingFace Hub ID (e.g. "
+            "facebook/wav2vec2-base-960h), which downloads at load time. Off by "
+            "default so an offline deployment stays offline."
+        ),
+    )
+    p.add_argument(
         "--json",
         action="store_true",
         default=False,
@@ -103,6 +114,7 @@ def run_transcribe(args: argparse.Namespace) -> int:
             model_type=args.model_type,
             device=args.device,
             decoder=args.decoder,
+            allow_remote=getattr(args, "allow_remote", False),
         )
     except Exception as e:
         print(f"Error loading checkpoint: {e}", file=sys.stderr)

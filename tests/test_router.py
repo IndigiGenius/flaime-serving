@@ -271,8 +271,35 @@ class TestEnginePool:
             device="cpu",
             decoder=route.decoder,
             warmup=False,
+            allow_remote=False,
         )
         assert engine is stub_engine
+
+    def test_pool_refuses_remote_checkpoints_by_default(self) -> None:
+        """The pool must not silently widen the loader's offline default."""
+        route = _make_stub_route()
+
+        with patch(
+            "flaime_serving.router.ASRInferenceEngine.load", return_value=MagicMock()
+        ) as mock_load:
+            EnginePool(device="cpu").get_or_load(route)
+
+        assert mock_load.call_args.kwargs["allow_remote"] is False
+
+    def test_pool_forwards_the_remote_opt_in(self) -> None:
+        """A caller that opts in must still reach Hub IDs through the pool.
+
+        Without this the gate would be a wall rather than a default: routing a
+        Hub-hosted base model would become impossible instead of deliberate.
+        """
+        route = _make_stub_route()
+
+        with patch(
+            "flaime_serving.router.ASRInferenceEngine.load", return_value=MagicMock()
+        ) as mock_load:
+            EnginePool(device="cpu", allow_remote=True).get_or_load(route)
+
+        assert mock_load.call_args.kwargs["allow_remote"] is True
 
     def test_engine_cache_hit_does_not_reload_from_disk(self) -> None:
         """Cache hit: ASRInferenceEngine.load() is called at most once for a given path."""
