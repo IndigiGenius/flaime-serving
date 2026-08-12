@@ -97,6 +97,22 @@
       "status": "ADAPTED",
       "sha256": "9aa73b3361c23efc3b6afa17df18dee802920aee7b9ecc02cde738bb3e03c41e",
       "deltas": "import rewrites (base_model, model_factory -> flaime_serving.vendored.*) + patch-target module-path strings; deleted 7 test methods that assert unvendored built-in families or duplicate vendored-family twins (enumerated in the REPO-21 PR); remaining tests unedited"
+    },
+    {
+      "path": "flaime_serving/vendored/protocols.py",
+      "upstream_path": "flaime/domain/models/protocols.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "a7f07a36459fea52fdac83e10439b48a270115290762ce55b4a37c3aee7578e1",
+      "status": "VERBATIM",
+      "deltas": "none — byte-identical copy (typing/torch only, zero flaime imports). Not in REPO-17's closure map for xeus_model.py (which never imports it) — emergent dependency discovered on REPO-18: TestXEUSModelProtocolCompliance in the upstream test file does inline `from flaime.domain.models.protocols import ...` in 4 test methods, unreachable via any already-vendored module. Vendored here (decision gate, REPO-18 Part 1 PR) rather than deleting/skipping those tests."
+    },
+    {
+      "path": "tests/vendored/test_xeus_model_core.py",
+      "upstream_path": "tests/infrastructure/models/test_xeus_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "713bac6b18974522a2b13662efd9df4063932c58dd3dbfc63a986344142bb640",
+      "status": "ADAPTED",
+      "deltas": "Part 1 of a two-file split of the 1,309-LoC upstream module (over the per-PR LoC cap as a single move; REPO-18 card). Carries TestXEUSModelConfig + TestXEUSASRModel (upstream lines 1-522, split at the class boundary nearest the file midpoint; the CTC-head/blank-bias/multi-loss/protocol-compliance classes clustered together from there onward went to Part 2 instead — the true nearest-midpoint boundary falls mid-cluster, but keeping that run of CTC/vocab-adjacent classes contiguous was prioritized per the card's steer, and both parts land well under the 1000-line cap regardless) plus the full module-level docstring/imports header, duplicated verbatim in test_xeus_model_ctc.py per the REPO-18 manifest-note decision gate rather than inventing a shared conftest. Import rewrites: base_model, xeus_model -> flaime_serving.vendored.*; the duplicated header's `torch.nn` import was dropped here as unused by this half's classes (ctc file keeps it, this file uses the fully-qualified `torch.nn.Linear` instead — ruff F401). No test edited, deleted, or skipped. Companion file: test_xeus_model_ctc.py (Part 2)."
     }
   ]
 }
