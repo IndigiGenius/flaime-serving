@@ -113,6 +113,14 @@
       "sha256": "713bac6b18974522a2b13662efd9df4063932c58dd3dbfc63a986344142bb640",
       "status": "ADAPTED",
       "deltas": "Part 1 of a two-file split of the 1,309-LoC upstream module (over the per-PR LoC cap as a single move; REPO-18 card). Carries TestXEUSModelConfig + TestXEUSASRModel (upstream lines 1-522, split at the class boundary nearest the file midpoint; the CTC-head/blank-bias/multi-loss/protocol-compliance classes clustered together from there onward went to Part 2 instead — the true nearest-midpoint boundary falls mid-cluster, but keeping that run of CTC/vocab-adjacent classes contiguous was prioritized per the card's steer, and both parts land well under the 1000-line cap regardless) plus the full module-level docstring/imports header, duplicated verbatim in test_xeus_model_ctc.py per the REPO-18 manifest-note decision gate rather than inventing a shared conftest. Import rewrites: base_model, xeus_model -> flaime_serving.vendored.*; the duplicated header's `torch.nn` import was dropped here as unused by this half's classes (ctc file keeps it, this file uses the fully-qualified `torch.nn.Linear` instead — ruff F401). No test edited, deleted, or skipped. Companion file: test_xeus_model_ctc.py (Part 2)."
+    },
+    {
+      "path": "tests/vendored/test_xeus_model_ctc.py",
+      "upstream_path": "tests/infrastructure/models/test_xeus_model.py",
+      "flaime_commit": "229b89415f1089aa79f1bbb25ab9166806a27672",
+      "sha256": "b5b911dc1184838b6df1c1716803891bf2e6f846d8b3734cc0230ab18f8cbf09",
+      "status": "ADAPTED",
+      "deltas": "Part 2 of a two-file split of the 1,309-LoC upstream module (see test_xeus_model_core.py for Part 1 and the split rationale). Carries TestXEUSBottleneckHead, TestXEUSBlankBiasInit, TestXEUSMultiLoss, TestXEUSModelProtocolCompliance, TestXEUSFromScratch, TestXEUSModelSaveLoad, TestXEUSEncoderFreezing (upstream lines 523-1309) plus the full module-level docstring/imports header, duplicated verbatim from Part 1 rather than inventing a shared conftest. Import rewrites: base_model, xeus_model -> flaime_serving.vendored.*; TestXEUSModelProtocolCompliance's 4 `from flaime.domain.models.protocols import ...` inline imports -> flaime_serving.vendored.protocols (emergent dependency, vendored in the Part 1 PR — see that entry's decision-gate note; not deleted/skipped/weakened). Duplicated header's `pytest` import dropped here as unused by this half's classes (core file keeps it — ruff F401). No test edited, deleted, or skipped."
     }
   ]
 }
